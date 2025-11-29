@@ -1,0 +1,46 @@
+﻿@using IPB1.ChartApp.Controllers
+@using Newtonsoft.Json
+@model List<SimpleChartDto>
+
+<div style="width: 50%; margin: auto;">
+    <canvas id="myChartJs"></canvas>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const _rawData = @Html.Raw(JsonConvert.SerializeObject(Model));
+
+        // ChartJS requires separate arrays for Labels and Data
+        const chartLabels = _rawData.map(x => x.Label);
+        const chartValues = _rawData.map(x => x.Value);
+
+        const ctx = document.getElementById('myChartJs').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Device Usage',
+                    data: chartValues,
+                    backgroundColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'User Devices Distribution'
+                    }
+                }
+            }
+        });
+    </script>
+}
