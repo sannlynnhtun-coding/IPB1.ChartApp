@@ -1,0 +1,37 @@
+﻿@using IPB1.ChartApp.Controllers
+@using Newtonsoft.Json
+@model List<SimpleChartDto>
+
+<figure class="highcharts-figure">
+    <div id="highcharts-container"></div>
+</figure>
+
+@section scripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <script>
+        const _rawData = @Html.Raw(JsonConvert.SerializeObject(Model));
+
+        // HighCharts needs categories array for X-axis and data array for Series
+        const categories = _rawData.map(x => x.Label);
+        const seriesData = _rawData.map(x => x.Value);
+
+        Highcharts.chart('highcharts-container', {
+            chart: { type: 'column' },
+            title: { text: 'Quarterly Sales' },
+            xAxis: {
+                categories: categories,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: { text: 'Sales ($)' }
+            },
+            series: [{
+                name: 'Revenue',
+                data: seriesData,
+                color: '#7cb5ec'
+            }]
+        });
+    </script>
+}

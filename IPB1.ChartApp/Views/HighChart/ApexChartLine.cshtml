@@ -1,0 +1,41 @@
+﻿@using IPB1.ChartApp.Controllers
+@using Newtonsoft.Json
+@model List<SimpleChartDto>
+
+<div id="apex-chart"></div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        const _rawData = @Html.Raw(JsonConvert.SerializeObject(Model));
+
+        // Mapping Data for Apex
+        const labels = _rawData.map(x => x.Label);
+        const values = _rawData.map(x => x.Value);
+
+        var options = {
+            series: [{
+                name: "Traffic",
+                data: values
+            }],
+            chart: {
+                height: 350,
+                type: 'line',
+                zoom: { enabled: false }
+            },
+            dataLabels: { enabled: false },
+            stroke: { curve: 'straight' },
+            title: {
+                text: 'Website Traffic by Month',
+                align: 'left'
+            },
+            xaxis: {
+                categories: labels
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#apex-chart"), options);
+        chart.render();
+    </script>
+}
